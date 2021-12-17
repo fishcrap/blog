@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>My New Hugo Site</title>
+    <title>Xujie&#39;s Blog</title>
     <link>https://fishcrap.github.io/blog/</link>
-    <description>Recent content on My New Hugo Site</description>
+    <description>Recent content on Xujie&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 17 Dec 2021 16:09:08 +0800</lastBuildDate><atom:link href="https://fishcrap.github.io/blog/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 17 Dec 2021 20:09:17 +0800</lastBuildDate><atom:link href="https://fishcrap.github.io/blog/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>My First Post</title>
-      <link>https://fishcrap.github.io/blog/posts/my-first-post/</link>
-      <pubDate>Fri, 17 Dec 2021 16:09:08 +0800</pubDate>
+      <title>Pip and Conda Change Repo</title>
+      <link>https://fishcrap.github.io/blog/posts/pip-and-conda/</link>
+      <pubDate>Fri, 17 Dec 2021 20:09:17 +0800</pubDate>
       
-      <guid>https://fishcrap.github.io/blog/posts/my-first-post/</guid>
-      <description></description>
+      <guid>https://fishcrap.github.io/blog/posts/pip-and-conda/</guid>
+      <description>Pip Change RepositoryConfigUse pip config to configure PyPi repository on user or global level:
+pip config [--user] set global.index https://my-company/nexus/repository/pypi-group/pypi pip config [--user] set global.index-url https://my-company/nexus/repository/pypi-group/simple pip config [--user] set global.trusted-host my-company where index-url is used by pip install, and index is used by pip search.
+Use pip config -v list to find the path of the configuration file.
+Famous Mirror Repositoryaliyun&amp;#39;s mirror: https://mirrors.</description>
     </item>
     
   </channel>
