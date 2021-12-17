@@ -1,4 +1,4 @@
 baseURL = 'https://fishcrap.github.io/blog/'
 languageCode = 'en-us'
-title = 'My New Hugo Site'
+title = 'Xujie's Blog'
 theme = "ananke"
