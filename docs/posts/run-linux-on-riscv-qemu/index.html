@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="en">
+    <meta name="color-scheme" content="light dark">
+
+    
+
+    <meta name="author" content="Xujie Shen">
+    <meta name="description" content="Build RISC-V toolchainSince &ldquo;qemu&rdquo; submodule is not related to the toolchain&rsquo;s compilation, you can just delete it.
+git clone https://github.com/riscv-collab/riscv-gnu-toolchain.git cd riscv-gnu-toolchain git rm qemu git submodule update --init --recursive ./configure --prefix=/opt/riscv make linux If the submodules of the repository is hard to download, you could clone the submodules separately:
+git clone https://github.com/riscv-collab/riscv-binutils-gdb.git git clone https://github.com/riscv-collab/riscv-dejagnu.git git clone https://github.com/riscv-collab/riscv-gcc.git git clone git://sourceware.org/git/glibc.git git clone git://sourceware.org/git/newlib-cygwin.git And then move the submodules into the toolchain:">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Run Linux on RISC-V QEMU"/>
+<meta name="twitter:description" content="Build RISC-V toolchainSince &ldquo;qemu&rdquo; submodule is not related to the toolchain&rsquo;s compilation, you can just delete it.
+git clone https://github.com/riscv-collab/riscv-gnu-toolchain.git cd riscv-gnu-toolchain git rm qemu git submodule update --init --recursive ./configure --prefix=/opt/riscv make linux If the submodules of the repository is hard to download, you could clone the submodules separately:
+git clone https://github.com/riscv-collab/riscv-binutils-gdb.git git clone https://github.com/riscv-collab/riscv-dejagnu.git git clone https://github.com/riscv-collab/riscv-gcc.git git clone git://sourceware.org/git/glibc.git git clone git://sourceware.org/git/newlib-cygwin.git And then move the submodules into the toolchain:"/>
+
+    <meta property="og:title" content="Run Linux on RISC-V QEMU" />
+<meta property="og:description" content="Build RISC-V toolchainSince &ldquo;qemu&rdquo; submodule is not related to the toolchain&rsquo;s compilation, you can just delete it.
+git clone https://github.com/riscv-collab/riscv-gnu-toolchain.git cd riscv-gnu-toolchain git rm qemu git submodule update --init --recursive ./configure --prefix=/opt/riscv make linux If the submodules of the repository is hard to download, you could clone the submodules separately:
+git clone https://github.com/riscv-collab/riscv-binutils-gdb.git git clone https://github.com/riscv-collab/riscv-dejagnu.git git clone https://github.com/riscv-collab/riscv-gcc.git git clone git://sourceware.org/git/glibc.git git clone git://sourceware.org/git/newlib-cygwin.git And then move the submodules into the toolchain:" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://fishcrap.github.io/blog/posts/run-linux-on-riscv-qemu/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-04-04T18:49:34+08:00" />
+<meta property="article:modified_time" content="2022-04-04T18:49:34+08:00" />
+
+
+
+    <title>
+  Run Linux on RISC-V QEMU · Xujie&#39;s Blog
+</title>
+
+    
+      <link rel="canonical" href="https://fishcrap.github.io/blog/posts/run-linux-on-riscv-qemu/">
+    
+
+    <link rel="preload" href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as="font" type="font/woff2" crossorigin>
+
+    
+      
+      
+      <link rel="stylesheet" href="/blog/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css" integrity="sha256-2f3b/&#43;byfmmYXcX&#43;BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+      
+        
+        
+        <link rel="stylesheet" href="/blog/css/coder-dark.min.002ee2378e14c7a68f1f0a53d9694ed252090987c4e768023fac694a4fc5f793.css" integrity="sha256-AC7iN44Ux6aPHwpT2WlO0lIJCYfE52gCP6xpSk/F95M=" crossorigin="anonymous" media="screen" />
+      
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="/blog/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/blog/images/favicon-16x16.png" sizes="16x16">
+
+    <link rel="apple-touch-icon" href="/blog/images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon.png">
+
+    <meta name="generator" content="Hugo 0.90.1" />
+  </head>
+
+  
+  
+    
+  
+  <body class="preload-transitions colorscheme-auto">
+    
+<div class="float-container">
+    <a id="dark-mode-toggle" class="colorscheme-toggle">
+        <i class="fa fa-adjust fa-fw" aria-hidden="true"></i>
+    </a>
+</div>
+
+
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="/blog">
+      Xujie&#39;s Blog
+    </a>
+    
+      <input type="checkbox" id="menu-toggle" />
+      <label class="menu-button float-right" for="menu-toggle">
+        <i class="fa fa-bars fa-fw" aria-hidden="true"></i>
+      </label>
+      <ul class="navigation-list">
+        
+          
+            <li class="navigation-item">
+              <a class="navigation-link" href="/blog/posts/">Blog</a>
+            </li>
+          
+            <li class="navigation-item">
+              <a class="navigation-link" href="/blog/about/">About</a>
+            </li>
+          
+        
+        
+      </ul>
+    
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">
+            <a class="title-link" href="https://fishcrap.github.io/blog/posts/run-linux-on-riscv-qemu/">
+              Run Linux on RISC-V QEMU
+            </a>
+          </h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fa fa-calendar" aria-hidden="true"></i>
+              <time datetime='2022-04-04T18:49:34&#43;08:00'>
+                April 4, 2022
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fa fa-clock-o" aria-hidden="true"></i>
+              2-minute read
+            </span>
+          </div>
+          <div class="authors">
+    <i class="fa fa-user" aria-hidden="true"></i>
+      <a href="/blog/authors/xujie-shen/">Xujie Shen</a></div>
+          
+          
+        </div>
+      </header>
+
+      <div>
+        
+        <h1 id="build-risc-v-toolchain">
+  Build RISC-V toolchain
+  <a class="heading-link" href="#build-risc-v-toolchain">
+    <i class="fa fa-link" aria-hidden="true"></i>
+  </a>
+</h1>
+<p>Since &ldquo;qemu&rdquo; submodule is not related to the toolchain&rsquo;s compilation, you can just delete it.</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">git clone https://github.com/riscv-collab/riscv-gnu-toolchain.git
+cd riscv-gnu-toolchain
+git rm qemu
+git submodule update --init --recursive
+./configure --prefix=/opt/riscv
+make linux
+</code></pre></div><p>If the submodules of the repository is hard to download, you could clone the submodules separately:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">git clone https://github.com/riscv-collab/riscv-binutils-gdb.git
+git clone https://github.com/riscv-collab/riscv-dejagnu.git
+git clone https://github.com/riscv-collab/riscv-gcc.git
+git clone git://sourceware.org/git/glibc.git
+git clone git://sourceware.org/git/newlib-cygwin.git
+</code></pre></div><p>And then move the submodules into the toolchain:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">cd riscv-gnu-toolchain
+rm riscv-binutils
+rm rm riscv-binutils
+rm riscv-dejagnu
+rm riscv-gcc
+rm riscv-gdb
+rm riscv-glibc
+rm riscv-newlib
+mv &lt;submodules&gt; riscv-gnu-toolchain 
+</code></pre></div><h1 id="prepare-linux-kernel">
+  Prepare Linux Kernel
+  <a class="heading-link" href="#prepare-linux-kernel">
+    <i class="fa fa-link" aria-hidden="true"></i>
+  </a>
+</h1>
+<p>Download Linux Kernel, and choose 5.4.188 version.</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">wget https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.4.188.tar.xz
+tar -xJf linux-5.4.188.tar.xz
+cd linux-5.4.188
+make ARCH=riscv CROSS_COMPILE=riscv64-unknown-linux-gnu- defconfig
+make ARCH=riscv CROSS_COMPILE=riscv64-unknown-linux-gnu- -j4
+</code></pre></div><p>The default isa is IMAC. If you do not need C-extension, a simple method is to alter .config before compiling the kernel.</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">make ARCH=riscv CROSS_COMPILE=riscv64-unknown-linux-gnu- defconfig
+&lt;edit <span style="font-style:italic">&#34;.config&#34;</span>: CONFIG_RISCV_ISA_C=y --&gt; CONFIG_RISCV_ISA_C=n&gt;
+make ARCH=riscv CROSS_COMPILE=riscv64-unknown-linux-gnu- -j4
+</code></pre></div><p>If you want to disable C-extension more elegantly, use <code>make ARCH=riscv menuconfig</code> instead of brutely editing the file <code>.config</code>.</p>
+<h1 id="qemu">
+  QEMU
+  <a class="heading-link" href="#qemu">
+    <i class="fa fa-link" aria-hidden="true"></i>
+  </a>
+</h1>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">wget https://download.qemu.org/qemu-6.0.0.tar.xz
+tar xvJf qemu-6.0.0.tar.xz
+cd qemu-6.0.0
+./configure --target-list=riscv64-softmmu,riscv32-softmmu
+make
+sudo make install
+</code></pre></div><h1 id="build-root-file-system">
+  Build Root File System
+  <a class="heading-link" href="#build-root-file-system">
+    <i class="fa fa-link" aria-hidden="true"></i>
+  </a>
+</h1>
+<p>You can use <code>busybox</code> to make a rootfs, which is necessary to start the kernel.</p>
+<h2 id="build-busybox">
+  Build Busybox
+  <a class="heading-link" href="#build-busybox">
+    <i class="fa fa-link" aria-hidden="true"></i>
+  </a>
+</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">git clone git://busybox.net/busybox.git
+git checkout 1_34_stable
+CROSS_COMPILE=riscv64-unknown-linux-gnu- make menuconfig
+&lt;Setting --&gt; Build Options --&gt; Build static binary (no shared libs) --&gt; save&gt;
+CROSS_COMPILE=riscv64-unknown-linux-gnu- make -j <span style="font-weight:bold">$(</span>nproc<span style="font-weight:bold">)</span>
+CROSS_COMPILE=riscv64-unknown-linux-gnu- make install
+</code></pre></div><p>You could find a <code>_install</code> directory which looks like:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">_install
+├── bin
+├── linuxrc -&gt; bin/busybox
+├── sbin
+└── usr
+</code></pre></div><h2 id="make-rootfs">
+  Make Rootfs
+  <a class="heading-link" href="#make-rootfs">
+    <i class="fa fa-link" aria-hidden="true"></i>
+  </a>
+</h2>
+<h3 id="add-directories">
+  Add Directories
+  <a class="heading-link" href="#add-directories">
+    <i class="fa fa-link" aria-hidden="true"></i>
+  </a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">dd <span style="font-weight:bold">if</span>=/dev/zero of=rootfs.img bs=1M count=64
+mkfs.ext4 rootfs.img
+
+mkdir mnt
+sudo mount -o loop rootfs.img mnt
+cd mnt
+sudo cp -r ../busybox/_install/* .
+sudo mkdir proc sys dev etc etc/init.d
+</code></pre></div><h3 id="init-rcs">
+  Init rcS
+  <a class="heading-link" href="#init-rcs">
+    <i class="fa fa-link" aria-hidden="true"></i>
+  </a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">cd etc/init.d/
+sudo touch rcS
+sudo vi rcS
+</code></pre></div><p>Edit <code>rcS</code> as following:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">#!/bin/sh
+</span><span style=""></span>mount -t proc none /proc
+mount -t sysfs none /sys
+/sbin/mdev -s
+</code></pre></div><p>Add execute permission for <code>rsS</code>.</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sudo chmod +x rcS
+</code></pre></div><p>Unmount.</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sudo umount mnt
+</code></pre></div><h1 id="opensbi">
+  OpenSBI
+  <a class="heading-link" href="#opensbi">
+    <i class="fa fa-link" aria-hidden="true"></i>
+  </a>
+</h1>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">git clone https://github.com/riscv-software-src/opensbi.git
+export CROSS_COMPILE=riscv64-unknown-linux-gnu-
+make PLATFORM=generic FW_PAYLOAD_PATH=&lt;linux_build_directory&gt;/arch/riscv/boot/Image
+</code></pre></div><h1 id="run-linux-on-qemu">
+  Run Linux on QEMU
+  <a class="heading-link" href="#run-linux-on-qemu">
+    <i class="fa fa-link" aria-hidden="true"></i>
+  </a>
+</h1>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">qemu-system-riscv64 -M virt -m 256M -nographic <span style="font-weight:bold;font-style:italic">\
+</span><span style="font-weight:bold;font-style:italic"></span>	-bios &lt;opensbi_build_directory&gt;/build/platform/generic/firmware/fw_jump.bin <span style="font-weight:bold;font-style:italic">\
+</span><span style="font-weight:bold;font-style:italic"></span>	-kernel &lt;linux_build_directory&gt;/arch/riscv/boot/Image <span style="font-weight:bold;font-style:italic">\
+</span><span style="font-weight:bold;font-style:italic"></span>	-drive file=&lt;linux_rootfs_directory&gt;/rootfs.img,format=raw,id=hd0 <span style="font-weight:bold;font-style:italic">\
+</span><span style="font-weight:bold;font-style:italic"></span>	-device virtio-blk-device,drive=hd0 <span style="font-weight:bold;font-style:italic">\
+</span><span style="font-weight:bold;font-style:italic"></span>	-append <span style="font-style:italic">&#34;root=/dev/vda rw console=ttyS0&#34;</span>
+</code></pre></div><h1 id="reference">
+  Reference
+  <a class="heading-link" href="#reference">
+    <i class="fa fa-link" aria-hidden="true"></i>
+  </a>
+</h1>
+<p><a href="https://zhuanlan.zhihu.com/p/258394849">在 QEMU 上运行 RISC-V 64 位版本的 Linux</a></p>
+<p><a href="http://mp.weixin.qq.com/s?__biz=MzI4MDQ3MzU1MQ==&amp;mid=2247484931&amp;idx=1&amp;sn=c3e2a344d30d34869093ce3dc8d15ed9&amp;chksm=ebb6bca3dcc135b5c9a32c0b7eee242844646411eff5d824a128d11790122fa9f66b78001594&amp;scene=21#wechat_redirect">riscv64 qemu上进行Linux环境搭建与开发记录</a></p>
+<p><a href="https://github.com/UCanLinux/riscv64-sample">https://github.com/UCanLinux/riscv64-sample</a></p>
+<p><a href="https://github.com/riscv-software-src/opensbi/blob/master/docs/platform/qemu_virt.md">https://github.com/riscv-software-src/opensbi/blob/master/docs/platform/qemu_virt.md</a></p>
+
+      </div>
+
+
+      <footer>
+        
+
+
+        <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "yourdiscussshortname" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <footer class="footer">
+  <section class="container">
+    ©
+    
+      2021 -
+    
+    2022
+     Xujie Shen 
+    ·
+    Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/">Coder</a>.
+    
+  </section>
+</footer>
+
+    </main>
+
+    
+      
+      <script src="/blog/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js" integrity="sha256-A7F3afT5GuNWZ&#43;HyocqMFvUFYlds&#43;Q/zKzF5kmkU2qU="></script>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+  </body>
+
+</html>

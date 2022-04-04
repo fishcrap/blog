@@ -6,7 +6,18 @@
     <description>Recent content on Xujie&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 17 Dec 2021 20:09:17 +0800</lastBuildDate><atom:link href="https://fishcrap.github.io/blog/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 04 Apr 2022 18:49:34 +0800</lastBuildDate><atom:link href="https://fishcrap.github.io/blog/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Run Linux on RISC-V QEMU</title>
+      <link>https://fishcrap.github.io/blog/posts/run-linux-on-riscv-qemu/</link>
+      <pubDate>Mon, 04 Apr 2022 18:49:34 +0800</pubDate>
+      
+      <guid>https://fishcrap.github.io/blog/posts/run-linux-on-riscv-qemu/</guid>
+      <description>Build RISC-V toolchainSince &amp;ldquo;qemu&amp;rdquo; submodule is not related to the toolchain&amp;rsquo;s compilation, you can just delete it.
+git clone https://github.com/riscv-collab/riscv-gnu-toolchain.git cd riscv-gnu-toolchain git rm qemu git submodule update --init --recursive ./configure --prefix=/opt/riscv make linux If the submodules of the repository is hard to download, you could clone the submodules separately:
+git clone https://github.com/riscv-collab/riscv-binutils-gdb.git git clone https://github.com/riscv-collab/riscv-dejagnu.git git clone https://github.com/riscv-collab/riscv-gcc.git git clone git://sourceware.org/git/glibc.git git clone git://sourceware.org/git/newlib-cygwin.git And then move the submodules into the toolchain:</description>
+    </item>
+    
     <item>
       <title>Pip and Conda Change Repo</title>
       <link>https://fishcrap.github.io/blog/posts/pip-and-conda/</link>
