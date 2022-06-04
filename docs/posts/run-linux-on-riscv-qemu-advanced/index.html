@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+
+
+
+
+<meta name="author" content="Xujie Shen">
+<meta name="description" content="Run Linux on RISC-V QEMU has described the entile process of booting RISC-V linux on QEMU. However, if you want to run an embedded linux on QEMU in only one binany image, you have to build the bootloader and the root file system into linux. This article will show how you can make it.
+InitramfsThere are several methods to generate initramfs for linux. Two construction will be introduced: one is manual and the other is automatic.">
+<meta name="keywords" content="blog,developer,personal">
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Run Linux on RISC-V QEMU with Initramfs"/>
+<meta name="twitter:description" content="Run Linux on RISC-V QEMU has described the entile process of booting RISC-V linux on QEMU. However, if you want to run an embedded linux on QEMU in only one binany image, you have to build the bootloader and the root file system into linux. This article will show how you can make it.
+InitramfsThere are several methods to generate initramfs for linux. Two construction will be introduced: one is manual and the other is automatic."/>
+
+<meta property="og:title" content="Run Linux on RISC-V QEMU with Initramfs" />
+<meta property="og:description" content="Run Linux on RISC-V QEMU has described the entile process of booting RISC-V linux on QEMU. However, if you want to run an embedded linux on QEMU in only one binany image, you have to build the bootloader and the root file system into linux. This article will show how you can make it.
+InitramfsThere are several methods to generate initramfs for linux. Two construction will be introduced: one is manual and the other is automatic." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://fishcrap.github.io/blog/posts/run-linux-on-riscv-qemu-advanced/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-04-14T19:14:39+08:00" />
+<meta property="article:modified_time" content="2022-04-14T19:14:39+08:00" />
+
+
+
+
+  <title>Xujie&#39;s Blog</title>
+
+  
+  <link rel="canonical" href="https://fishcrap.github.io/blog/posts/run-linux-on-riscv-qemu-advanced/">
+  
+
+  <link rel="preload" href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as="font" type="font/woff2" crossorigin>
+
+
+  
+  
+  <link rel="stylesheet" href="/blog/css/coder.min.734cda956399e4d3cba201d4b77c66da88eb5f1217cf218ef006b7c7b990bcf8.css" integrity="sha256-c0zalWOZ5NPLogHUt3xm2ojrXxIXzyGO8Aa3x7mQvPg=" crossorigin="anonymous" media="screen" />
+
+
+
+
+
+  
+  
+    
+    
+    <link rel="stylesheet" href="/blog/css/coder-dark.min.39e41a7f16bdf8cb16e43cae7d714fa1016f1d2d2898a5b3f27f42c9979204e2.css" integrity="sha256-OeQafxa9&#43;MsW5DyufXFPoQFvHS0omKWz8n9CyZeSBOI=" crossorigin="anonymous" media="screen" />
+  
+
+
+
+   
+
+
+
+
+  <link rel="icon" type="image/png" href="/blog/images/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/blog/images/favicon-16x16.png" sizes="16x16">
+
+<link rel="apple-touch-icon" href="/blog/images/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon.png">
+
+<link rel="manifest" href="/blog/site.webmanifest">
+<link rel="mask-icon" href="/blog/images/safari-pinned-tab.svg" color="#5bbad5">
+
+
+  
+
+  <meta name="generator" content="Hugo 0.90.1" />
+
+
+  
+
+</head>
+
+
+
+
+
+
+
+<body class="preload-transitions colorscheme-auto">
+  
+<div class="float-container">
+    <a id="dark-mode-toggle" class="colorscheme-toggle">
+        <i class="fa fa-adjust fa-fw" aria-hidden="true"></i>
+    </a>
+</div>
+
+
+  <main class="wrapper">
+    <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="/blog">
+      Xujie&#39;s Blog
+    </a>
+    
+      <input type="checkbox" id="menu-toggle" />
+      <label class="menu-button float-right" for="menu-toggle">
+        <i class="fa fa-bars fa-fw" aria-hidden="true"></i>
+      </label>
+      <ul class="navigation-list">
+        
+          
+            <li class="navigation-item">
+              <a class="navigation-link" href="/blog/posts/">Blog</a>
+            </li>
+          
+            <li class="navigation-item">
+              <a class="navigation-link" href="/blog/about/">About</a>
+            </li>
+          
+        
+        
+      </ul>
+    
+  </section>
+</nav>
+
+
+    <div class="content">
+      
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">
+            <a class="title-link" href="https://fishcrap.github.io/blog/posts/run-linux-on-riscv-qemu-advanced/">
+              Run Linux on RISC-V QEMU with Initramfs
+            </a>
+          </h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fa fa-calendar" aria-hidden="true"></i>
+              <time datetime="2022-04-14T19:14:39&#43;08:00">
+                April 14, 2022
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fa fa-clock-o" aria-hidden="true"></i>
+              3-minute read
+            </span>
+          </div>
+          <div class="authors">
+  <i class="fa fa-user" aria-hidden="true"></i>
+    <a href="/blog/authors/xujie-shen/">Xujie Shen</a></div>
+
+          
+          
+        </div>
+      </header>
+
+      <div>
+        
+        <p><a href="https://fishcrap.github.io/blog/posts/run-linux-on-riscv-qemu/">Run Linux on RISC-V QEMU</a> has described the entile process of booting RISC-V linux on QEMU. However, if you want to run an embedded linux on QEMU in only one binany image, you have to build the bootloader and the root file system into linux. This article will show how you can make it.</p>
+<h1 id="initramfs">
+  Initramfs
+  <a class="heading-link" href="#initramfs">
+    <i class="fa fa-link" aria-hidden="true"></i>
+  </a>
+</h1>
+<p>There are several methods to generate initramfs for linux. Two construction will be introduced: one is manual and the other is automatic.</p>
+<h2 id="manually-build-with-busybox">
+  Manually Build with Busybox
+  <a class="heading-link" href="#manually-build-with-busybox">
+    <i class="fa fa-link" aria-hidden="true"></i>
+  </a>
+</h2>
+<h3 id="build-busybox">
+  Build Busybox
+  <a class="heading-link" href="#build-busybox">
+    <i class="fa fa-link" aria-hidden="true"></i>
+  </a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">git clone git://busybox.net/busybox.git
+git checkout 1_34_stable
+CROSS_COMPILE=riscv64-unknown-linux-gnu- make menuconfig
+&lt;Setting --&gt; Build Options --&gt; Build static binary (no shared libs) --&gt; save&gt;
+CROSS_COMPILE=riscv64-unknown-linux-gnu- make -j <span style="font-weight:bold">$(</span>nproc<span style="font-weight:bold">)</span>
+CROSS_COMPILE=riscv64-unknown-linux-gnu- make install
+</code></pre></div><h3 id="add-directories">
+  Add Directories
+  <a class="heading-link" href="#add-directories">
+    <i class="fa fa-link" aria-hidden="true"></i>
+  </a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">mkdir initramfs
+cp -r _install/* initramfs/
+</code></pre></div><h3 id="add-init">
+  Add <code>init</code>
+  <a class="heading-link" href="#add-init">
+    <i class="fa fa-link" aria-hidden="true"></i>
+  </a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">touch init
+</code></pre></div><p>Alter <code>init</code> file as following:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">#!/bin/sh
+</span><span style=""></span>
+echo <span style="font-style:italic">&#34;Loading, please wait...&#34;</span>
+
+export PATH=<span style="font-style:italic">&#34;/bin:/sbin:/usr/bin&#34;</span>
+
+[ -d /dev ] || mkdir -m 0755 /dev
+[ -d /root ] || mkdir --mode=0700 /root
+[ -d /sys ] || mkdir /sys
+[ -d /proc ] || mkdir /proc
+[ -d /tmp ] || mkdir /tmp
+[ -d /mnt ] || mkdir /mnt
+
+<span style="font-style:italic"># Mount /proc and /sys:</span>
+<span style="font-style:italic"># mount -n proc /proc -t proc</span>
+<span style="font-style:italic"># mount -n sysfs /sys -t sysfs</span>
+mount -t proc none /proc
+mount -t sysfs none /sys
+
+[ -e /dev/console ] || mknod /dev/console c 5 1
+[ -e /dev/null ] || mknod /dev/null c 1 3
+
+/sbin/mdev -s
+
+setsid cttyhack sh
+
+/bin/sh -i
+</code></pre></div><p>Make <code>init</code> executable:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">chmod +x init
+</code></pre></div><p>The directory <code>initramfs</code> should be looks like this:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">├── bin
+├── init
+├── linuxrc -&gt; bin/busybox
+├── sbin
+└── usr
+</code></pre></div><h3 id="pack-and-compress">
+  Pack and Compress
+  <a class="heading-link" href="#pack-and-compress">
+    <i class="fa fa-link" aria-hidden="true"></i>
+  </a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">find . | cpio -o -H newc | gzip -9c &gt; ../initrd.cpio.gz
+</code></pre></div><h2 id="automatically-build-with-buildroot">
+  Automatically Build with Buildroot
+  <a class="heading-link" href="#automatically-build-with-buildroot">
+    <i class="fa fa-link" aria-hidden="true"></i>
+  </a>
+</h2>
+<h3 id="buildroot">
+  Buildroot
+  <a class="heading-link" href="#buildroot">
+    <i class="fa fa-link" aria-hidden="true"></i>
+  </a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">wget https://buildroot.org/downloads/buildroot-2022.02.1.tar.gz
+tar -zxf buildroot-2022.02.1.tar.gz
+cd buildroot-2022.02.1
+make menuconfig
+</code></pre></div><p>menuconfig:</p>
+<ul>
+<li>Target Options
+<ul>
+<li>Target Architecture &ndash;&gt; riscv</li>
+</ul>
+</li>
+<li>Toolchain
+<ul>
+<li>Toolchain Type &ndash;&gt; External Toolchain</li>
+<li>Toolchain Path &ndash;&gt; &lt;example: /opt/riscv&gt;</li>
+<li>Toolchain prefix &ndash;&gt; &lt;example: riscv64-unknown-linux-gnu&gt;</li>
+<li>External toolchain gcc version &ndash;&gt; &lt;example: 11.x&gt;</li>
+<li>External toolchain kernel headers series &ndash;&gt; &lt;example: 5.10.x&gt;</li>
+<li>External toolchain C library &ndash;&gt; &lt;example: glibc/egblic&gt;</li>
+</ul>
+</li>
+<li>Filesystem images
+<ul>
+<li>select <em>cpio the root filesystem</em></li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">make
+</code></pre></div><p>CPIO image is in directory <code>output/images/</code>.</p>
+<h1 id="linux-kernel">
+  Linux Kernel
+  <a class="heading-link" href="#linux-kernel">
+    <i class="fa fa-link" aria-hidden="true"></i>
+  </a>
+</h1>
+<p>Download Linux Kernel, and choose 5.4.188 version.</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">wget https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.4.188.tar.xz
+tar -xJf linux-5.4.188.tar.xz
+cd linux-5.4.188
+make ARCH=riscv CROSS_COMPILE=riscv64-unknown-linux-gnu- defconfig
+make ARCH=riscv menuconfig
+</code></pre></div><p>menuconfig:</p>
+<ul>
+<li>General Setup
+<ul>
+<li>Initramfs source file &ndash;&gt; &lt;path-to-initramfs&gt;</li>
+</ul>
+</li>
+<li>Platform type
+<ul>
+<li>Exclude <em>Emit compressed instructions when building Linux</em> (remove c-extension)</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">make ARCH=riscv CROSS_COMPILE=riscv64-unknown-linux-gnu- -j4
+</code></pre></div><h1 id="qemu">
+  QEMU
+  <a class="heading-link" href="#qemu">
+    <i class="fa fa-link" aria-hidden="true"></i>
+  </a>
+</h1>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">wget https://download.qemu.org/qemu-6.0.0.tar.xz
+tar xvJf qemu-6.0.0.tar.xz
+cd qemu-6.0.0
+./configure --target-list=riscv64-softmmu,riscv32-softmmu
+make
+sudo make install
+</code></pre></div><h1 id="opensbi">
+  OpenSBI
+  <a class="heading-link" href="#opensbi">
+    <i class="fa fa-link" aria-hidden="true"></i>
+  </a>
+</h1>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">git clone https://github.com/riscv-software-src/opensbi.git
+export CROSS_COMPILE=riscv64-unknown-linux-gnu-
+make PLATFORM=generic FW_PAYLOAD_PATH=&lt;linux_build_directory&gt;/arch/riscv/boot/Image <span style="font-weight:bold;font-style:italic">\
+</span><span style="font-weight:bold;font-style:italic"></span>PLATFORM_RISCV_ISA=rv64imafd_zicsr_zifencei
+</code></pre></div><h1 id="test-with-qemu">
+  Test With QEMU
+  <a class="heading-link" href="#test-with-qemu">
+    <i class="fa fa-link" aria-hidden="true"></i>
+  </a>
+</h1>
+<p>Linux without initramfs embedded:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">qemu-system-riscv64 -M virt -m 256M -nographic -kernel &lt;linux_build_directory&gt;/arch/riscv/boot/Image <span style="font-weight:bold;font-style:italic">\
+</span><span style="font-weight:bold;font-style:italic"></span>-initrd &lt;path-to-initramfs&gt;
+</code></pre></div><p>Linux with initramfs embedded:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">qemu-system-riscv64 -M virt -m 256M -nographic -kernel &lt;linux_build_directory&gt;/arch/riscv/boot/Image
+</code></pre></div><p>Linux with initramfs and opensbi embedded:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">qemu-system-riscv64 -M virt -m 256M -nographic <span style="font-weight:bold;font-style:italic">\
+</span><span style="font-weight:bold;font-style:italic"></span>-bios &lt;opensbi_build_directory&gt;build/platform/generic/firmware/fw_payload.elf
+</code></pre></div><h1 id="reference">
+  Reference
+  <a class="heading-link" href="#reference">
+    <i class="fa fa-link" aria-hidden="true"></i>
+  </a>
+</h1>
+<p><a href="https://bootlin.com/pub/conferences/2013/kernel-recipes/rootfs-kernel-developer/rootfs-kernel-developer.pdf">Rootfs made easy with Buildroot</a></p>
+<p><a href="https://digwtx.com/initramfs.html">构建基于Busybox的Initramfs</a></p>
+
+      </div>
+
+
+      <footer>
+        
+
+
+        <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "yourdiscussshortname" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+    </div>
+
+    <footer class="footer">
+  <section class="container">
+    ©
+    
+      2021 -
+    
+    2022
+     Xujie Shen 
+    ·
+    
+    Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/">Coder</a>.
+    
+  </section>
+</footer>
+
+  </main>
+
+  
+  
+  <script src="/blog/js/coder.min.08fc7a7924db1ae6786408cb68e12ff953e6329376a469f5f517f3769c19194d.js" integrity="sha256-CPx6eSTbGuZ4ZAjLaOEv&#43;VPmMpN2pGn19RfzdpwZGU0="></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</body>
+
+</html>

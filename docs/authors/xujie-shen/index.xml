@@ -6,7 +6,17 @@
     <description>Recent content in Xujie Shen on Xujie&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 04 Apr 2022 18:49:34 +0800</lastBuildDate><atom:link href="https://fishcrap.github.io/blog/authors/xujie-shen/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 14 Apr 2022 19:14:39 +0800</lastBuildDate><atom:link href="https://fishcrap.github.io/blog/authors/xujie-shen/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Run Linux on RISC-V QEMU with Initramfs</title>
+      <link>https://fishcrap.github.io/blog/posts/run-linux-on-riscv-qemu-advanced/</link>
+      <pubDate>Thu, 14 Apr 2022 19:14:39 +0800</pubDate>
+      
+      <guid>https://fishcrap.github.io/blog/posts/run-linux-on-riscv-qemu-advanced/</guid>
+      <description>Run Linux on RISC-V QEMU has described the entile process of booting RISC-V linux on QEMU. However, if you want to run an embedded linux on QEMU in only one binany image, you have to build the bootloader and the root file system into linux. This article will show how you can make it.
+InitramfsThere are several methods to generate initramfs for linux. Two construction will be introduced: one is manual and the other is automatic.</description>
+    </item>
+    
     <item>
       <title>Run Linux on RISC-V QEMU</title>
       <link>https://fishcrap.github.io/blog/posts/run-linux-on-riscv-qemu/</link>
